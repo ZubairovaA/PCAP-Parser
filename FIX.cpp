@@ -53,6 +53,7 @@ void Parse( )     //parsing the dumped packets
         if ((Handle = pcap_open_offline(fname, errbuf)) == NULL)        //openig the file for reading the packets
         {  cout << "Can't open the file";
             pcap_close(Handle);                                         //closing the session
+            return ;
         }
 
         
@@ -63,6 +64,7 @@ void Parse( )     //parsing the dumped packets
         {
             cout << "Can't open the writing file";
             pcap_close(Handle);                               //closing the session
+            return ;
         }
     
 
@@ -226,6 +228,7 @@ void Parse( )     //parsing the dumped packets
             cout << "End of file ";
             Parse_File << "End of file ";
             pcap_close(Handle);
+            return ;
        
         }
         else if ( Read_Packet == PCAP_ERROR)    //handle exceptions
@@ -233,6 +236,7 @@ void Parse( )     //parsing the dumped packets
             cout << "Error reading file";
             Parse_File << "Error reading file";
             pcap_close(Handle);
+            return ;
         }
       
         
