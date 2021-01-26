@@ -21,13 +21,13 @@ int Internet_ip::ip_size() {
 }
 
 
-/*
-template <typename T>
-Base_TL <T>* Internet_ip::Check_TL(ofstream& Parse_File) {
+
+
+void Internet_ip::Check_TL(ofstream& Parse_File , const unsigned char* TP_Hdr, const char* payload, unsigned short& AppProtocol, bool& Is_FIX, bool& To_Continue) {
      TL_ptoto_type Obj_TL;
-	 template <typename T>
-	 Base_TL <T>* p= Obj_TL.build(this->ip_p, Parse_File);
-	 return p;
+	
+	  Obj_TL.build(this->ip_p, TP_Hdr, payload, Parse_File, this,  AppProtocol,Is_FIX, To_Continue);
+	 
    
  }
 
@@ -41,16 +41,16 @@ Base_TL <T>* Internet_ip::Check_TL(ofstream& Parse_File) {
   }
 
  
-  template <typename T>
-  Base_TL <T>* TL_ptoto_type::build(unsigned char ip_p, ofstream& Parse_File)
+ 
+  void TL_ptoto_type::build(unsigned char ip_p, const unsigned char* TP_Hdr, const char* payload, ofstream& Parse_File, Internet_ip* ip, unsigned short& AppProtocol, bool& Is_FIX, bool& To_Continue)
   {
 	  const auto found = keys.find(ip_p);
 	  if (found == keys.cend())
 	  {  
 	  Parse_File << "Transport Layer Protocol: Unknown" << endl;
-	  return nullptr;
+	 
        }
-	return found->second->get();
+	return found->second->build(TP_Hdr, payload, Parse_File, ip, AppProtocol, Is_FIX, To_Continue);
 }
 
   template <class T>
@@ -58,4 +58,3 @@ Base_TL <T>* Internet_ip::Check_TL(ofstream& Parse_File) {
   {
 	  keys.insert({ name, new Builder<T>() });
   }
- */
