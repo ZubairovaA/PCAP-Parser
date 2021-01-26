@@ -18,7 +18,8 @@ void Port_type::fill_port()
     mp_port.insert({ 179,"Border Gateway Protocol" });
 }
 
-void  Port_type::Check_App_Protocol(ofstream& Parse_File, unsigned short AppProtocol) {
+void  Port_type::Check_App_Protocol(ofstream& Parse_File, unsigned short AppProtocol) 
+{
     map<unsigned short, string>::iterator it;
     if (mp_port.find(ntohs(AppProtocol)) != mp_port.end())
     {
@@ -32,7 +33,7 @@ void  Port_type::Check_App_Protocol(ofstream& Parse_File, unsigned short AppProt
 
 void Transport_tcp::Show_TL(const unsigned char* TP_Hdr, const char* payload, ofstream& Parse_File, Internet_ip* ip, unsigned short& AppProtocol, bool& Is_FIX,  bool& To_Continue) const {
     
-	int count = 1, sum = 0, tag10 = 0, FIX_Length = 0;   //tag10= the checksum of the FIX protocol in the tag 10
+    int count = 1, sum = 0, tag10 = 0, FIX_Length = 0;   //tag10= the checksum of the FIX protocol in the tag 10
     int TCP_Length, Payload_Length;
     TCP_Length = (th_offx2) >> 4;      //the TCP header length
     Payload_Length = ntohs(ip->ip_len) - ip->ip_size() - (TCP_Length * 4);    // the payload length
@@ -55,13 +56,11 @@ void Transport_tcp::Show_TL(const unsigned char* TP_Hdr, const char* payload, of
             payload++;
             count++;
         }
-
-        count = 1;
-        char x = (*payload+3);
+        char x = (* (payload+3));
         tag10 += (x - '0') * 100;
-        x= (*payload + 4);
+        x= (* (payload + 4));
         tag10 += (x - '0') * 10;
-        x = (*payload + 5);
+        x = (* (payload + 5));
         tag10 += (x - '0');
         
         ((sum % 256) != tag10) ? Parse_File << "The FIX checksum is incorrect" << endl : Parse_File << "The FIX checksum is correct" << endl;
