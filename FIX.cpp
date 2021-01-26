@@ -82,7 +82,8 @@ void Parse()     //parsing the dumped packets
         ethernet->VLAN_Protocol(packet, Parse_File, Is_VLAN, CheckVLAN);  //Checking if there is the VLAN protocol
         ethernet->Check_IP_Protocol(To_Continue, Parse_File);  //Checking the Internet Layer Protocol
 
-        if (To_Continue == true) {   //if the IP layer is not the IPv4 - continue
+        if (To_Continue == true)      //if the IP layer is not the IPv4 - continue
+        {   
             To_Continue = !To_Continue;
             continue;
         }
@@ -121,14 +122,15 @@ void Parse()     //parsing the dumped packets
            }
            */
      
-        if (To_Continue == true) {   //if the Transport Layer protocol is unknown or the dst port can't be determinated - continue
+        if (To_Continue == true)          //if the Transport Layer protocol is unknown or the dst port can't be determinated - continue
+        {   
             To_Continue = !To_Continue;
             continue;
         }
 
-        if (Is_FIX == false)
+        if (Is_FIX == false)        //determinate the application layer protocol
         {
-            Parse_File << "Application Layer Protocol: ";       //determinate the application layer protocol
+            Parse_File << "Application Layer Protocol: ";       
             Port_type Obj_Port;
             Obj_Port.Check_App_Protocol(Parse_File, AppProtocol);
         }
