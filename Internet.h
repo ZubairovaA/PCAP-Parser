@@ -44,12 +44,17 @@ public:
 
     template <class T> struct Builder : public Base   //the class to create the object of the transport layer protocol class
     {
-        void build(const unsigned char* TP_Hdr, const char* payload, ofstream& Parse_File, Internet_ip* ip, unsigned short& AppProtocol, bool& Is_FIX, bool& To_Continue)
-	{
-            T* p= new T();
+        T* p = nullptr;
+        void build(const unsigned char* TP_Hdr, const char* payload, ofstream& Parse_File, Internet_ip* ip, unsigned short& AppProtocol, bool& Is_FIX, bool& To_Continue) {
+             p= new T();
             p = (T*)(TP_Hdr);    //initialize the pointer to the new class with the pointer to the beginning of the transoprt layer header in the packet.  
-            p->Show_TL( TP_Hdr,  payload,  Parse_File,  ip,  AppProtocol, Is_FIX, To_Continue); // all the work with the transport layer header.
-        };   
+            p->Show_TL( TP_Hdr,  payload,  Parse_File,  ip,  AppProtocol, Is_FIX, To_Continue); // all the work with the transport layer header.  
+           
+        }   
+        ~ Builder() {
+          
+            delete p;   
+        }
     };
 
     map<unsigned char, Base*> keys = {};   // the dependencies between the type of the transp layer protocol and the class with its' headers' realization
