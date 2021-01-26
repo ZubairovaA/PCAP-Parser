@@ -30,7 +30,8 @@ void  Port_type::Check_App_Protocol(ofstream& Parse_File, unsigned short AppProt
     }
 }
 
-void Transport_tcp::Show_TL(const unsigned char* TP_Hdr, const char* payload, ofstream& Parse_File, Internet_ip* ip, unsigned short& AppProtocol, bool& Is_FIX) const {
+void Transport_tcp::Show_TL(const unsigned char* TP_Hdr, const char* payload, ofstream& Parse_File, Internet_ip* ip, unsigned short& AppProtocol, bool& Is_FIX,  bool& To_Continue) const {
+    
 	int count = 1, sum = 0, tag10 = 0, FIX_Length = 0;   //tag10= the checksum of the FIX protocol in the tag 10
     int TCP_Length, Payload_Length;
     TCP_Length = (th_offx2) >> 4;      //the TCP header length
@@ -45,6 +46,7 @@ void Transport_tcp::Show_TL(const unsigned char* TP_Hdr, const char* payload, of
 
     if ((Payload_Length != 0) && (*payload == '8') && (*(payload + 1) == '=') && (*(payload + 2) == 'F') && (*(payload + 3) == 'I') && (*(payload + 4) == 'X')) //checking the FIX
     {
+       
         Parse_File << "Financial Information Exchange Protocol: ";
         Is_FIX = true;
         while (count <= (Payload_Length - 7))     //sum the bytes till the tag 10
@@ -61,7 +63,7 @@ void Transport_tcp::Show_TL(const unsigned char* TP_Hdr, const char* payload, of
         tag10 += (x - '0') * 10;
         x = (*payload + 5);
         tag10 += (x - '0');
-       
+        
         ((sum % 256) != tag10) ? Parse_File << "The FIX checksum is incorrect" << endl : Parse_File << "The FIX checksum is correct" << endl;
     }
 
@@ -69,7 +71,7 @@ void Transport_tcp::Show_TL(const unsigned char* TP_Hdr, const char* payload, of
 }
 
 
-void Transport_udp::Show_TL(const unsigned char* TP_Hdr, const char* payload, ofstream& Parse_File, Internet_ip* ip, unsigned short& AppProtocol, bool& Is_FIX)  const {
+void Transport_udp::Show_TL(const unsigned char* TP_Hdr, const char* payload, ofstream& Parse_File, Internet_ip* ip, unsigned short& AppProtocol, bool& Is_FIX, bool& To_Continue)  const {
 	payload = (const char*)(TP_Hdr + 8);
 	AppProtocol = dst_port;      //determinate the dst port
 	Parse_File << "UDP, Src port: " << ntohs(src_port) << ", Dst port: " << ntohs(dst_port) << ", Len:" << ntohs(udp_length) << endl;
