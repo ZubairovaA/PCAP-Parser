@@ -7,7 +7,7 @@
 #include<fstream>
 
 void Port_type::fill_port()
-{       //пары номер порта- строка с названием протокола прикладного уровня    filling the map with the pairs "number of the port - name of the application layer protocol "
+{       //РїР°СЂС‹ РЅРѕРјРµСЂ РїРѕСЂС‚Р°- СЃС‚СЂРѕРєР° СЃ РЅР°Р·РІР°РЅРёРµРј РїСЂРѕС‚РѕРєРѕР»Р° РїСЂРёРєР»Р°РґРЅРѕРіРѕ СѓСЂРѕРІРЅСЏ    filling the map with the pairs "number of the port - name of the application layer protocol "
     mp_port.insert({ 25 ,"Simple Mail Transfer Protocol" });
     mp_port.insert({ 53 ,"Domain Name Server" });
     mp_port.insert({ 33,"Display Support Protocol" });
@@ -30,7 +30,7 @@ void  Port_type::Check_App_Protocol(ofstream& Parse_File, unsigned short AppProt
     }
 }
 
-void Transport_tcp::Show_TL(const unsigned char* TP_Hdr, const char* payload, ofstream& Parse_File, Internet_ip* ip, unsigned short& AppProtocol, bool& Is_FIX) {
+void Transport_tcp::Show_TL(const unsigned char* TP_Hdr, const char* payload, ofstream& Parse_File, Internet_ip* ip, unsigned short& AppProtocol, bool& Is_FIX) const {
 	int count = 1, sum = 0, tag10 = 0, FIX_Length = 0;   //tag10= the checksum of the FIX protocol in the tag 10
     int TCP_Length, Payload_Length;
     TCP_Length = (th_offx2) >> 4;      //the TCP header length
@@ -55,27 +55,13 @@ void Transport_tcp::Show_TL(const unsigned char* TP_Hdr, const char* payload, of
         }
 
         count = 1;
-        while (count <= Payload_Length)    //determinate the checksum in the tag 10
-        {
-            if (count == 4)
-            {
-                char x = (*payload);
-                tag10 += (x - '0') * 100;
-            }
-            if (count == 5)
-            {
-                char x = (*payload);
-                tag10 += (x - '0') * 10;
-            }
-            if (count == 6)
-            {
-                char x = (*payload);
-                tag10 += (x - '0');
-            }
-            count++;
-            payload++;
-        }
-
+        char x = (*payload+3);
+        tag10 += (x - '0') * 100;
+        x= (*payload + 4);
+        tag10 += (x - '0') * 10;
+        x = (*payload + 5);
+        tag10 += (x - '0');
+       
         ((sum % 256) != tag10) ? Parse_File << "The FIX checksum is incorrect" << endl : Parse_File << "The FIX checksum is correct" << endl;
     }
 
@@ -83,13 +69,13 @@ void Transport_tcp::Show_TL(const unsigned char* TP_Hdr, const char* payload, of
 }
 
 
-void Transport_udp::Show_TL(const unsigned char* TP_Hdr, const char* payload, ofstream& Parse_File, Internet_ip* ip, unsigned short& AppProtocol, bool& Is_FIX) {
+void Transport_udp::Show_TL(const unsigned char* TP_Hdr, const char* payload, ofstream& Parse_File, Internet_ip* ip, unsigned short& AppProtocol, bool& Is_FIX)  const {
 	payload = (const char*)(TP_Hdr + 8);
 	AppProtocol = dst_port;      //determinate the dst port
 	Parse_File << "UDP, Src port: " << ntohs(src_port) << ", Dst port: " << ntohs(dst_port) << ", Len:" << ntohs(udp_length) << endl;
 }
 
-void Transport_ICMP::Show_TL(const unsigned char* TP_Hdr, const char* payload, ofstream& Parse_File, Internet_ip* ip, unsigned short& AppProtocol, bool& Is_FIX, bool& To_Continue) {
+void Transport_ICMP::Show_TL(const unsigned char* TP_Hdr, const char* payload, ofstream& Parse_File, Internet_ip* ip, unsigned short& AppProtocol, bool& Is_FIX, bool& To_Continue) const {
 	Parse_File << "Protocol: ICMP" << endl;
 	payload = (const char*)(TP_Hdr + 4);
 	To_Continue = true;
