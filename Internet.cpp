@@ -42,7 +42,8 @@ void TL_ptoto_type::build(unsigned char ip_p, const unsigned char* TP_Hdr, const
      {  
 	Parse_File << "Transport Layer Protocol: Unknown" << endl;
      }
-    return found->second->build(TP_Hdr, payload, Parse_File, ip, AppProtocol, Is_FIX, To_Continue);
+     found->second->build(TP_Hdr, payload, Parse_File, ip, AppProtocol, Is_FIX, To_Continue);
+     found->second->~Base();
 }
 
   template <class T>
