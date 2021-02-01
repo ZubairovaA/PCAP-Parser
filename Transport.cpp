@@ -44,8 +44,10 @@ void Transport_tcp::Show_TL(const unsigned char* TP_Hdr, const char* payload, of
     Parse_File << "TCP, Src port: " << ntohs(src_port) << ", Dst port: " << ntohs(dst_port)
         << " Seq: " << ntohl(th_seq) << " Ack: " << ntohl(th_ack) << " Len: " << Payload_Length << endl;
 
+    char data[5];
+    strncpy_s(data, payload, 5);
 
-    if ((Payload_Length != 0) && (*payload == '8') && (*(payload + 1) == '=') && (*(payload + 2) == 'F') && (*(payload + 3) == 'I') && (*(payload + 4) == 'X')) //checking the FIX
+    if ((Payload_Length != 0) && (strcmp(data, "8=FIX"))) //checking the FIX
     {
        
         Parse_File << "Financial Information Exchange Protocol: ";
