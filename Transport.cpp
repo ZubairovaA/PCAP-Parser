@@ -18,8 +18,7 @@ void Port_type::fill_port()
     mp_port.insert({ 179,"Border Gateway Protocol" });
 }
 
-void  Port_type::Check_App_Protocol(ofstream& Parse_File, unsigned short AppProtocol) 
-{
+void  Port_type::Check_App_Protocol(ofstream& Parse_File, unsigned short AppProtocol) {
     map<unsigned short, string>::iterator it;
     if (mp_port.find(ntohs(AppProtocol)) != mp_port.end())
     {
@@ -33,21 +32,18 @@ void  Port_type::Check_App_Protocol(ofstream& Parse_File, unsigned short AppProt
 
 void Transport_tcp::Show_TL(const unsigned char* TP_Hdr, const char* payload, ofstream& Parse_File, Internet_ip* ip, unsigned short& AppProtocol, bool& Is_FIX,  bool& To_Continue) const {
     
-    int count = 1, sum = 0, tag10 = 0, FIX_Length = 0;   //tag10= the checksum of the FIX protocol in the tag 10
-    int TCP_Length, Payload_Length;
+	int count = 1, sum = 0, tag10 = 0, FIX_Length = 0;   //tag10= the checksum of the FIX protocol in the tag 10
+    int TCP_Length;
     TCP_Length = (th_offx2) >> 4;      //the TCP header length
-    Payload_Length = ntohs(ip->ip_len) - ip->ip_size() - (TCP_Length * 4);    // the payload length
-
+    int Payload_Length = ntohs(ip->ip_len) - ip->ip_size() - (TCP_Length * 4);    // the payload length
+  
     payload = (const char*)(TP_Hdr + TCP_Length * 4);
     AppProtocol = dst_port;                                               //determinate the dst port
 
     Parse_File << "TCP, Src port: " << ntohs(src_port) << ", Dst port: " << ntohs(dst_port)
         << " Seq: " << ntohl(th_seq) << " Ack: " << ntohl(th_ack) << " Len: " << Payload_Length << endl;
-
-    char data[5];
-    strncpy_s(data, payload, 5);
-
-    if ((Payload_Length != 0) && (strcmp(data, "8=FIX"))) //checking the FIX
+  
+    if ((Payload_Length != 0) && (*payload == '8') && (*(payload + 1) == '=') && (*(payload + 2) == 'F') && (*(payload + 3) == 'I') && (*(payload + 4) == 'X')) //checking the FIX
     {
        
         Parse_File << "Financial Information Exchange Protocol: ";
@@ -64,7 +60,7 @@ void Transport_tcp::Show_TL(const unsigned char* TP_Hdr, const char* payload, of
         tag10 += (x - '0') * 10;
         x = (* (payload + 5));
         tag10 += (x - '0');
-        
+      
         ((sum % 256) != tag10) ? Parse_File << "The FIX checksum is incorrect" << endl : Parse_File << "The FIX checksum is correct" << endl;
     }
 
