@@ -47,9 +47,8 @@ void Internet_ip::Check_TL(ofstream& Parse_File , const unsigned char* TP_Hdr, c
 	  {  
 	  Parse_File << "Transport Layer Protocol: Unknown" << endl;
       }
-	 found->second->build(TP_Hdr, payload, Parse_File, ip, AppProtocol, Is_FIX, To_Continue);
-	 
-}
+	 found->second->build(TP_Hdr, payload, Parse_File, ip, AppProtocol, Is_FIX, To_Continue)	 
+  }
 
   template <class T>
   void TL_ptoto_type:: add(const string& name)
