@@ -8,8 +8,9 @@
 #include<thread>
 #include<memory>
 #include <typeinfo>
+#pragma comment(lib, "wpcap.lib")
 #pragma comment(lib, "ws2_32.lib")
-#pragma comment(lib , "wpcap.lib")
+
 #include<Winsock2.h> //константы протоколов Windows, для Linux netinet/in.h
 #include"Link.h"
 #include"Internet.h"
@@ -55,7 +56,7 @@ void Parse()     //parsing the dumped packets
     {
         cout << "Can't open the file";
         pcap_close(Handle);
-        return ;              //closing the session
+        return;              //closing the session
     }
 
     ofstream Parse_File;                                  //creating the ofstream object 
@@ -64,7 +65,7 @@ void Parse()     //parsing the dumped packets
     {
         cout << "Can't open the writing file";
         pcap_close(Handle);   //closing the session
-        return ;
+        return;
     }
 
 
@@ -83,7 +84,7 @@ void Parse()     //parsing the dumped packets
         ethernet->Check_IP_Protocol(To_Continue, Parse_File);  //Checking the Internet Layer Protocol
 
         if (To_Continue == true)      //if the IP layer is not the IPv4 - continue
-        {   
+        {
             To_Continue = !To_Continue;
             continue;
         }
@@ -95,42 +96,16 @@ void Parse()     //parsing the dumped packets
         int IP_Size = ip->ip_size();
         ip->Check_TL(Parse_File, TP_Hdr, payload, AppProtocol, Is_FIX, To_Continue);
 
-       /*
-          switch (ip->ip_p)           //determinate the the Transport layer protocol
-           {
-           case IPPROTO_TCP:
-               Transport_tcp* tcp;         //if the Transport layer protocol is TCP
-               tcp = (Transport_tcp*)(TP_Hdr);
-               tcp->Show_TL(TP_Hdr, payload, Parse_File, ip, AppProtocol, Is_FIX);
-               break;
-
-           case IPPROTO_UDP:   //if the Transport layer protocol is UDP
-               Transport_udp* udp;
-               udp = (Transport_udp*)(TP_Hdr);
-               udp->Show_TL ( TP_Hdr, payload, Parse_File, ip, AppProtocol, Is_FIX);
-               break;
-
-           case IPPROTO_ICMP:       //if the Transport layer protocol is ICMP
-               Transport_ICMP* icmp;
-               icmp = ( Transport_ICMP*)(TP_Hdr);
-               icmp->Show_TL(TP_Hdr, payload, Parse_File, ip, AppProtocol, Is_FIX, To_Continue);
-
-           default:       // if the Transport layer protocol is unknown
-               Parse_File << "Transport Layer Protocol: Unknown"<<endl;
-               continue;
-
-           }
-           */
-     
+       
         if (To_Continue == true)          //if the Transport Layer protocol is unknown or the dst port can't be determinated - continue
-        {   
+        {
             To_Continue = !To_Continue;
             continue;
         }
 
         if (Is_FIX == false)        //determinate the application layer protocol
         {
-            Parse_File << "Application Layer Protocol: ";       
+            Parse_File << "Application Layer Protocol: ";
             Port_type Obj_Port;
             Obj_Port.Check_App_Protocol(Parse_File, AppProtocol);
         }
@@ -148,7 +123,7 @@ void Parse()     //parsing the dumped packets
         cout << endl << "End of file ";
         Parse_File << endl << "End of file ";
         pcap_close(Handle);
-        return ;
+        return;
 
     }
     else if (Read_Packet == PCAP_ERROR)    //handle exceptions
@@ -156,7 +131,7 @@ void Parse()     //parsing the dumped packets
         cout << "Error reading file";
         Parse_File << endl << "Error reading file";
         pcap_close(Handle);
-        return ;
+        return;
     }
 
 
