@@ -33,8 +33,7 @@ class Transport_tcp  {
 
 	Transport_tcp (){}
 	 ~Transport_tcp() {}
-	//void Show_TL(const unsigned char* TP_Hdr, const char* payload, ofstream& Parse_File, Internet_ip* ip, unsigned short& AppProtocol, bool& Is_FIX) const;
-void Show_TL(const unsigned char* TP_Hdr, const char* payload, ofstream& Parse_File, Internet_ip* ip, unsigned short& AppProtocol, bool& Is_FIX, bool& To_Continue) const;
+	void Show_TL(const unsigned char* TP_Hdr, const char* payload, ofstream& Parse_File, Internet_ip* ip, unsigned short& AppProtocol, bool& Is_FIX, bool& To_Continue) const;
       friend class Internet_ip;
 	  friend class  TL_ptoto_type;
 };
@@ -46,7 +45,6 @@ class Transport_udp  {
 	unsigned short   sum;            //чексумма
 	Transport_udp (){}
 	 ~Transport_udp (){}
-	//void Show_TL(const unsigned char* TP_Hdr, const char* payload, ofstream& Parse_File, Internet_ip* ip, unsigned short& AppProtocol, bool& Is_FIX) const;
 	 void Show_TL(const unsigned char* TP_Hdr, const char* payload, ofstream& Parse_File, Internet_ip* ip, unsigned short& AppProtocol, bool& Is_FIX, bool& To_Continue) const;
 	 friend class Internet_ip;
 	 friend class  TL_ptoto_type;
