@@ -43,28 +43,31 @@ void Transport_tcp::Show_TL(const unsigned char* TP_Hdr, const char* payload, of
     Parse_File << "TCP, Src port: " << ntohs(src_port) << ", Dst port: " << ntohs(dst_port)
         << " Seq: " << ntohl(th_seq) << " Ack: " << ntohl(th_ack) << " Len: " << Payload_Length << endl;
   
-    if ((Payload_Length != 0) && (*payload == '8') && (*(payload + 1) == '=') && (*(payload + 2) == 'F') && (*(payload + 3) == 'I') && (*(payload + 4) == 'X')) //checking the FIX
+    if (Payload_Length != 0)
     {
-       
-        Parse_File << "Financial Information Exchange Protocol: ";
-        Is_FIX = true;
-        while (count <= (Payload_Length - 7))     //sum the bytes till the tag 10
-        {
-            sum += (*payload);
-            payload++;
-            count++;
-        }
-        char x = (* (payload+3));
-        tag10 += (x - '0') * 100;
-        x= (* (payload + 4));
-        tag10 += (x - '0') * 10;
-        x = (* (payload + 5));
-        tag10 += (x - '0');
-      
-        ((sum % 256) != tag10) ? Parse_File << "The FIX checksum is incorrect" << endl : Parse_File << "The FIX checksum is correct" << endl;
-    }
+        char data[6];
+        strncpy_s(data, 6, payload, 5);
 
-	
+        if (strcmp(data, "8=FIX")==0)
+        {
+            Parse_File << "Financial Information Exchange Protocol: ";
+            Is_FIX = true;
+            while (count <= (Payload_Length - 7))     //sum the bytes till the tag 10
+            {
+                sum += (*payload);
+                payload++;
+                count++;
+            }
+            char x = (*(payload + 3));
+            tag10 += (x - '0') * 100;
+            x = (*(payload + 4));
+            tag10 += (x - '0') * 10;
+            x = (*(payload + 5));
+            tag10 += (x - '0');
+
+            ((sum % 256) != tag10) ? Parse_File << "The FIX checksum is incorrect" << endl : Parse_File << "The FIX checksum is correct" << endl;
+        }
+    }	
 }
 
 
